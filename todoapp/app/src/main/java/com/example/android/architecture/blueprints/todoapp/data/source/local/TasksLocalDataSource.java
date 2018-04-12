@@ -64,22 +64,16 @@ public class TasksLocalDataSource implements TasksDataSource {
      */
     @Override
     public void getTasks(@NonNull final LoadTasksCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final List<Task> tasks = mTasksDao.getTasks();
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (tasks.isEmpty()) {
-                            // This will be called if the table is new or just empty.
-                            callback.onDataNotAvailable();
-                        } else {
-                            callback.onTasksLoaded(tasks);
-                        }
-                    }
-                });
-            }
+        Runnable runnable = () -> {
+            final List<Task> tasks = mTasksDao.getTasks();
+            mAppExecutors.mainThread().execute(() -> {
+                if (tasks.isEmpty()) {
+                    // This will be called if the table is new or just empty.
+                    callback.onDataNotAvailable();
+                } else {
+                    callback.onTasksLoaded(tasks);
+                }
+            });
         };
 
         mAppExecutors.diskIO().execute(runnable);
@@ -91,22 +85,16 @@ public class TasksLocalDataSource implements TasksDataSource {
      */
     @Override
     public void getTask(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final Task task = mTasksDao.getTaskById(taskId);
+        Runnable runnable = () -> {
+            final Task task = mTasksDao.getTaskById(taskId);
 
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (task != null) {
-                            callback.onTaskLoaded(task);
-                        } else {
-                            callback.onDataNotAvailable();
-                        }
-                    }
-                });
-            }
+            mAppExecutors.mainThread().execute(() -> {
+                if (task != null) {
+                    callback.onTaskLoaded(task);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+            });
         };
 
         mAppExecutors.diskIO().execute(runnable);
@@ -115,23 +103,13 @@ public class TasksLocalDataSource implements TasksDataSource {
     @Override
     public void saveTask(@NonNull final Task task) {
         checkNotNull(task);
-        Runnable saveRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.insertTask(task);
-            }
-        };
+        Runnable saveRunnable = () -> mTasksDao.insertTask(task);
         mAppExecutors.diskIO().execute(saveRunnable);
     }
 
     @Override
     public void completeTask(@NonNull final Task task) {
-        Runnable completeRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.updateCompleted(task.getId(), true);
-            }
-        };
+        Runnable completeRunnable = () -> mTasksDao.updateCompleted(task.getId(), true);
 
         mAppExecutors.diskIO().execute(completeRunnable);
     }
@@ -144,12 +122,7 @@ public class TasksLocalDataSource implements TasksDataSource {
 
     @Override
     public void activateTask(@NonNull final Task task) {
-        Runnable activateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.updateCompleted(task.getId(), false);
-            }
-        };
+        Runnable activateRunnable = () -> mTasksDao.updateCompleted(task.getId(), false);
         mAppExecutors.diskIO().execute(activateRunnable);
     }
 
@@ -161,13 +134,7 @@ public class TasksLocalDataSource implements TasksDataSource {
 
     @Override
     public void clearCompletedTasks() {
-        Runnable clearTasksRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.deleteCompletedTasks();
-
-            }
-        };
+        Runnable clearTasksRunnable = () -> mTasksDao.deleteCompletedTasks();
 
         mAppExecutors.diskIO().execute(clearTasksRunnable);
     }
@@ -180,24 +147,14 @@ public class TasksLocalDataSource implements TasksDataSource {
 
     @Override
     public void deleteAllTasks() {
-        Runnable deleteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.deleteTasks();
-            }
-        };
+        Runnable deleteRunnable = () -> mTasksDao.deleteTasks();
 
         mAppExecutors.diskIO().execute(deleteRunnable);
     }
 
     @Override
     public void deleteTask(@NonNull final String taskId) {
-        Runnable deleteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mTasksDao.deleteTaskById(taskId);
-            }
-        };
+        Runnable deleteRunnable = () -> mTasksDao.deleteTaskById(taskId);
 
         mAppExecutors.diskIO().execute(deleteRunnable);
     }

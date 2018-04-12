@@ -46,18 +46,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TaskDetailFragment extends Fragment implements TaskDetailContract.View {
 
-    @NonNull
     private static final String ARGUMENT_TASK_ID = "TASK_ID";
-
-    @NonNull
     private static final int REQUEST_EDIT_TASK = 1;
 
     private TaskDetailContract.Presenter mPresenter;
-
     private TextView mDetailTitle;
-
     private TextView mDetailDescription;
-
     private CheckBox mDetailCompleteStatus;
 
     public static TaskDetailFragment newInstance(@Nullable String taskId) {
@@ -80,20 +74,14 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.taskdetail_frag, container, false);
         setHasOptionsMenu(true);
-        mDetailTitle = (TextView) root.findViewById(R.id.task_detail_title);
-        mDetailDescription = (TextView) root.findViewById(R.id.task_detail_description);
-        mDetailCompleteStatus = (CheckBox) root.findViewById(R.id.task_detail_complete);
+        mDetailTitle = root.findViewById(R.id.task_detail_title);
+        mDetailDescription = root.findViewById(R.id.task_detail_description);
+        mDetailCompleteStatus = root.findViewById(R.id.task_detail_complete);
 
         // Set up floating action button
-        FloatingActionButton fab =
-                (FloatingActionButton) getActivity().findViewById(R.id.fab_edit_task);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_edit_task);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.editTask();
-            }
-        });
+        fab.setOnClickListener(v -> mPresenter.editTask());
 
         return root;
     }
@@ -148,14 +136,11 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
 
         mDetailCompleteStatus.setChecked(complete);
         mDetailCompleteStatus.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            mPresenter.completeTask();
-                        } else {
-                            mPresenter.activateTask();
-                        }
+                (buttonView, isChecked) -> {
+                    if (isChecked) {
+                        mPresenter.completeTask();
+                    } else {
+                        mPresenter.activateTask();
                     }
                 });
     }

@@ -33,13 +33,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TaskDetailPresenter implements TaskDetailContract.Presenter {
 
     private final TasksRepository mTasksRepository;
-
     private final TaskDetailContract.View mTaskDetailView;
 
     @Nullable
     private String mTaskId;
 
-    public TaskDetailPresenter(@Nullable String taskId,
+    TaskDetailPresenter(@Nullable String taskId,
                                @NonNull TasksRepository tasksRepository,
                                @NonNull TaskDetailContract.View taskDetailView) {
         mTaskId = taskId;

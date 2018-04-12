@@ -39,7 +39,6 @@ public class TasksActivity extends AppCompatActivity {
     private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
 
     private DrawerLayout mDrawerLayout;
-
     private TasksPresenter mTasksPresenter;
 
     @Override
@@ -48,16 +47,16 @@ public class TasksActivity extends AppCompatActivity {
         setContentView(R.layout.tasks_act);
 
         // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
         // Set up the navigation drawer.
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
@@ -103,26 +102,23 @@ public class TasksActivity extends AppCompatActivity {
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.list_navigation_menu_item:
-                                // Do nothing, we're already on that screen
-                                break;
-                            case R.id.statistics_navigation_menu_item:
-                                Intent intent =
-                                        new Intent(TasksActivity.this, StatisticsActivity.class);
-                                startActivity(intent);
-                                break;
-                            default:
-                                break;
-                        }
-                        // Close the navigation drawer when an item is selected.
-                        menuItem.setChecked(true);
-                        mDrawerLayout.closeDrawers();
-                        return true;
+                menuItem -> {
+                    switch (menuItem.getItemId()) {
+                        case R.id.list_navigation_menu_item:
+                            // Do nothing, we're already on that screen
+                            break;
+                        case R.id.statistics_navigation_menu_item:
+                            Intent intent =
+                                    new Intent(TasksActivity.this, StatisticsActivity.class);
+                            startActivity(intent);
+                            break;
+                        default:
+                            break;
                     }
+                    // Close the navigation drawer when an item is selected.
+                    menuItem.setChecked(true);
+                    mDrawerLayout.closeDrawers();
+                    return true;
                 });
     }
 
